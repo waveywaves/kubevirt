@@ -598,6 +598,20 @@ func (t *templateService) RenderLaunchManifest(vmi *v1.VirtualMachineInstance) (
 		}
 	}
 
+	// custom ovmfdata
+	volumeMounts = append(volumeMounts, k8sv1.VolumeMount{
+		Name:      "custom-ovmf-data",
+		MountPath: "/usr/share/customOVMF",
+	})
+	volumes = append(volumes, k8sv1.Volume{
+		Name: "custom-ovmf-data",
+		VolumeSource: k8sv1.VolumeSource{
+			PersistentVolumeClaim: &k8sv1.PersistentVolumeClaimVolumeSource{
+				ClaimName: "ovmf-data",
+			},
+		},
+	})
+
 	if t.imagePullSecret != "" {
 		imagePullSecrets = appendUniqueImagePullSecret(imagePullSecrets, k8sv1.LocalObjectReference{
 			Name: t.imagePullSecret,
